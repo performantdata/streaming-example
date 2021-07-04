@@ -1,0 +1,9 @@
+# sbt
+/project/project/
+/project/target/
+/target/
+/src/docker
+
+# IntelliJ
+/.bsp/
+/.idea/
