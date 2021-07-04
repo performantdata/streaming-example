@@ -15,12 +15,12 @@ docker run -p 8080:8080 streaming-example
 ```
 Using the above port number, `http://localhost:8080/words` should return the current word count
 (if it is ready; an HTTP 204 until then).
-The word count is collected every minute.
+The word count is collected every 30 seconds.
 
 ## Design choices
 
 This project is based on my earlier [`unit-conversion`](https://github.com/performantdata/unit-conversion/) one.
-It employs Scala 3, and extends the use of http4s.
+It employs Scala 3, and extends the use of http4s and fs2.
 
 * Since we don't know what's in the black box binary that generates the input, we can't trust it,
   so we run it in a Docker container.
@@ -39,8 +39,13 @@ It employs Scala 3, and extends the use of http4s.
   This seems acceptable since this application would have nothing new to produce,
   and its termination serves as a notice that the input generator has terminated,
   which is probably an unusual condition.
+  (Not yet implemented.)
 
 * The JSON event objects are assumed to be newline-delimited.
   This appears to be the case for a sample of the black box output.
   Something like this needs to be assumed,
   since the bad output from the black box typically starts with an opening brace that doesn't have a matching closing brace.
+
+* Events from the black box are collected for a specific time interval (currently 30 seconds)
+  _after which_ their summary is made available via HTTP.
+  That is, the summary of the events being collected in the current interval are not published.
